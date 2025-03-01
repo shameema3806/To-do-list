@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To-Do List</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f3e5f5; /* Light purple background */
+      color: #4a148c; /* Dark purple text */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background-color: #e1bee7; /* Light purple container */
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      width: 300px;
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #4a148c;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    button {
+      background-color: #4a148c; /* Dark purple button */
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover {
+      background-color: #6a1b9a; /* Lighter purple on hover */
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li {
+      background-color: #ce93d8; /* Light purple list items */
+      padding: 10px;
+      margin-bottom: 5px;
+      border-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .task-text {
+      flex-grow: 1;
+    }
+    .actions {
+      display: flex;
+      gap: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>To-Do List</h1>
+    <input type="text" id="taskInput" placeholder="Enter a task">
+    <button onclick="addTask()">Add</button>
+    <input type="text" id="searchInput" placeholder="Search tasks" oninput="findTask()">
+    <ul id="taskList"></ul>
+  </div>
+
+  <script>
+    let tasks = [];
+
+    // Function to add a task
+    function addTask() {
+      const taskInput = document.getElementById('taskInput');
+      const taskText = taskInput.value.trim();
+
+      if (taskText !== '') {
+        tasks.push({ id: Date.now(), text: taskText });
+        taskInput.value = '';
+        renderTasks();
+      }
+    }
+
+    // Function to delete a task
+    function deleteTask(id) {
+      tasks = tasks.filter(task => task.id !== id);
+      renderTasks();
+    }
+
+    // Function to update a task
+    function updateTask(id) {
+      const newText = prompt('Update your task:');
+      if (newText !== null && newText.trim() !== '') {
+        tasks = tasks.map(task => task.id === id ? { ...task, text: newText.trim() } : task);
+        renderTasks();
+      }
+    }
+
+    // Function to find a task
+    function findTask() {
+      const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+      const filteredTasks = tasks.filter(task => task.text.toLowerCase().includes(searchQuery));
+      renderTasks(filteredTasks);
+    }
+
+    // Function to render tasks
+    function renderTasks(taskArray = tasks) {
+      const taskList = document.getElementById('taskList');
+      taskList.innerHTML = '';
+
+      taskArray.forEach(task => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <span class="task-text">${task.text}</span>
+          <div class="actions">
+            <button onclick="updateTask(${task.id})">Update</button>
+            <button onclick="deleteTask(${task.id})">Delete</button>
+          </div>
+        `;
+        taskList.appendChild(li);
+      });
+    }
+
+    // Initial render
+    renderTasks();
+  </script>
+</body>
+</html>
